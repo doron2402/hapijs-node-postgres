@@ -190,6 +190,7 @@ lab.experiment('Postgres Plugin', () => {
     });
 
     lab.test('It should support native binding (by default)', (done) => {
+
         let numberOfNativePoolCalled = 0;
         let numberOfNonNativePoolCalled = 0;
         const stub = {
