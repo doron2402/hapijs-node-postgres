@@ -1,8 +1,8 @@
 # hapijs-node-postgres
-hapijs-node-postgres
+hapi-node-postgres-7
 
 ## Install the plugin
-`npm install --save `
+`npm install --save hapi-node-postgres-7`
 
 ## Register the plugin
 ```javascript
