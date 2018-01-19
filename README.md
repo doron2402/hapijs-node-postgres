@@ -4,6 +4,10 @@ hapi-node-postgres-7
 ## Install the plugin
 `npm install --save hapi-node-postgres-7`
 
+## Use native mode
+ if you would like to use the `native` mode you'll have to manually `npm install pg-native`
+ I use the pure Javascript driver it's protable and pretty fast.
+
 ## Register the plugin
 ```javascript
   server.register({
@@ -44,7 +48,7 @@ handler: function (request, reply) {
 
 ## Use Postgres via the `server` object
 ```javascript
-    var { pool } = server.plugins['hapijs-node-postgres'];
+    var { pool } = server.plugins['hapijs-node-postgres-7'];
     pool.query(`select * from users limit 10`)
     .then((result) => {
         // print the results from the table
