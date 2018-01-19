@@ -156,15 +156,16 @@ lab.experiment('Postgres Plugin', () => {
                     }
                     connect() {
                         // return client
-                        const pgClient = {
+                        const pg = {
                             release: function () {
 
                                 isReleased = true;
                                 Code.expect(isReleased).to.equal(true);
                                 done();
-                            }
+                            },
+                            client: {}
                         };
-                        return Promise.resolve(pgClient);
+                        return Promise.resolve(pg);
                     }
                 }
             }
@@ -183,7 +184,6 @@ lab.experiment('Postgres Plugin', () => {
             Code.expect(err).to.not.exist();
             request = { method: 'GET', url: '/' };
             server.inject(request, (response) => {
-
                 Code.expect(response.result).to.be.equal('foo');
             });
         });

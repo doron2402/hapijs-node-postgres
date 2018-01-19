@@ -28,7 +28,7 @@ hapi-node-postgres-7
 ```javascript
 
 handler: function (request, reply) {
-    request.pgClient.query(`select * from users where user_id = ${request.params.id}`)
+    request.pg.client.query(`select * from users where user_id = ${request.params.id}`)
     .then((res) => {
       if (res.rows && res.rows.length > 0) {
           return reply({ result: res.rows }).code(200);

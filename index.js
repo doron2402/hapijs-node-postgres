@@ -32,9 +32,10 @@ exports.register = function (server, options, next) {
 
     server.ext(config.attach, (request, reply) => {
 
+        request.pg = {};
         pool.connect().then((client) => {
 
-            request.pgClient = client;
+            request.pg = client;
             reply.continue();
         }).catch((err) => {
 
@@ -45,8 +46,8 @@ exports.register = function (server, options, next) {
 
     server.on(config.detach, (request, err) => {
 
-        if (request.pgClient && request.pgClient.release) {
-            request.pgClient.release();
+        if (request.pg && request.pg.release) {
+            request.pg.release();
         }
     });
 

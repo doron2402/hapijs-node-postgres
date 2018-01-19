@@ -30,7 +30,7 @@ server.route({
         handler: function (request, reply) {
 
             const sqlQuery = `select * from ${TABLE_NAME} limit ${request.query.limit}`;
-            request.pgClient.query(sqlQuery).then((res) => {
+            request.pg.client.query(sqlQuery).then((res) => {
 
                 if (res.rows && res.rows.length > 0) {
                     return reply({ result: res.rows }).code(200);
@@ -56,7 +56,7 @@ server.route({
         handler: function (request, reply) {
 
             const sqlQuery = `select * from ${TABLE_NAME} where ${COL_NAME} = ${request.params.id}`;
-            request.pgClient.query(sqlQuery).then((res) => {
+            request.pg.client.query(sqlQuery).then((res) => {
 
                 if (res.rows && res.rows.length > 0) {
                     return reply({ result: res.rows }).code(200);
@@ -82,7 +82,7 @@ server.route({
         handler: function (request, reply) {
 
             const sqlQuery = `select * from ${TABLE_NAME} where username = '${request.params.username}'`;
-            request.pgClient.query(sqlQuery).then((res) => {
+            request.pg.client.query(sqlQuery).then((res) => {
 
                 if (res.rows && res.rows.length > 0) {
                     return reply({ result: res.rows }).code(200);
