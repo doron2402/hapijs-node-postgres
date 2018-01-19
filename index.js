@@ -7,7 +7,7 @@ const DEFAULTS = {
     connectionString: process.env.POSTGRES_URL,
     attach: 'onPreHandler',
     detach: 'tail',
-    native: true,
+    native: false,
     idleTimeoutMillis: 10000,
     max: 10
 };
