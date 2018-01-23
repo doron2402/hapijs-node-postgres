@@ -18,14 +18,14 @@ exports.register = function (server, options, next) {
     const config = Hoek.applyToDefaults(DEFAULTS, options);
     let Pool = PG.Pool;
     let pool = null;
-    if (!!config.native) {
+    if (config.native === true) {
         Pool = PG.native.Pool;
     }
     pool = new Pool(config);
 
     pool.on('error', (err) => {
 
-        if (!!config.logToStdout) {
+        if (config.logToStdout === true) {
             console.error('Unexpected error on idle client', err);
         }
         throw (err);
@@ -34,7 +34,7 @@ exports.register = function (server, options, next) {
     // Log on new connection
     pool.on('acquire', () => {
 
-        if (!!config.logToStdout) {
+        if (config.logToStdout === true) {
             console.log('PG Pool Acquire new client');
             console.log();
         }
@@ -43,7 +43,7 @@ exports.register = function (server, options, next) {
     // Log on connection closed
     pool.on('remove', () => {
 
-        if (!!config.logToStdout) {
+        if (config.logToStdout === true) {
             console.log('client is closed & removed from the pool');
         }
     });
