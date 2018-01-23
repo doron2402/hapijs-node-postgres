@@ -28,6 +28,21 @@ exports.register = function (server, options, next) {
         throw (err);
     });
 
+    // Log on new connection
+    pool.on('acquire', (client) => {
+
+        console.log('PG Pool Acquire new client');
+        console.log(client);
+    });
+
+    // Log on connection closed
+    pool.on('remove', (client) => {
+
+        console.log('client is closed & removed from the pool');
+        console.log(client);
+    });
+
+
     server.expose('pool', new Pool(config));
 
     server.ext(config.attach, (request, reply) => {
@@ -54,7 +69,8 @@ exports.register = function (server, options, next) {
     process.on('SIGTERM', () => {
 
         server.log(['warn'], 'Closing postgres pool on SIGTERM');
-        pool.end();
+        // We shouldn't call pool end it will timeout anyway
+        // pool.end();
     });
 
     next();

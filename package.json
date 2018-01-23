@@ -1,6 +1,6 @@
 {
   "name": "hapi-node-postgres-7",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Hapijs plugin for using postgres (with native binding) ",
   "main": "index.js",
   "scripts": {

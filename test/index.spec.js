@@ -184,12 +184,16 @@ lab.experiment('Postgres Plugin', () => {
             Code.expect(err).to.not.exist();
             request = { method: 'GET', url: '/' };
             server.inject(request, (response) => {
+
                 Code.expect(response.result).to.be.equal('foo');
             });
         });
     });
 
-    lab.test('It should support native binding (by default)', (done) => {
+    /**
+     * Javascript is fast enough there's no need to use native binding
+     */
+    lab.test('It should NOT support native binding (by default)', (done) => {
 
         let numberOfNativePoolCalled = 0;
         let numberOfNonNativePoolCalled = 0;
@@ -233,10 +237,63 @@ lab.experiment('Postgres Plugin', () => {
         }, (err) => {
 
             Code.expect(err).to.not.exist();
+            Code.expect(numberOfNativePoolCalled).to.be.equal(0);
+            Code.expect(numberOfNonNativePoolCalled).to.be.equal(2);
+            done();
+        });
+    });
+
+    /**
+     * When using Native binding
+     */
+    lab.test('It should call pool.native', (done) => {
+
+        let numberOfNativePoolCalled = 0;
+        let numberOfNonNativePoolCalled = 0;
+        const stub = {
+            pg: {
+                native: {
+                    Pool: class Pool {
+                        constructor(config) {
+
+                            numberOfNativePoolCalled++;
+                            Code.expect(config.native).to.be.equal(true);
+                            Code.expect(config.connectionString).to.match(/postgres/);
+                        }
+                        on(event, cb) {
+
+                            return;
+                        }
+                    }
+                },
+                Pool: class Pool {
+                    constructor() {
+
+                        numberOfNonNativePoolCalled++;
+                        return;
+                    }
+                    on() {
+
+                        return;
+                    }
+                }
+            }
+        };
+        const Plugin = Proxyquire('../', stub);
+
+        server.register({
+            register: Plugin,
+            options: {
+                connectionString: 'postgres://postgres:password@localhost:5432/my_app',
+                detach: 'tail',
+                native: true
+            }
+        }, (err) => {
+
+            Code.expect(err).to.not.exist();
             Code.expect(numberOfNativePoolCalled).to.be.equal(2);
             Code.expect(numberOfNonNativePoolCalled).to.be.equal(0);
             done();
         });
     });
-
 });
