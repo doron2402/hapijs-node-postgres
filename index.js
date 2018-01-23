@@ -9,7 +9,8 @@ const DEFAULTS = {
     detach: 'tail',
     native: false,
     idleTimeoutMillis: 10000,
-    max: 10
+    max: 10,
+    logToStdout: false
 };
 
 exports.register = function (server, options, next) {
@@ -22,24 +23,29 @@ exports.register = function (server, options, next) {
     }
     pool = new Pool(config);
 
-    pool.on('error', (err, client) => {
+    pool.on('error', (err) => {
 
-        console.error('Unexpected error on idle client', err);
+        if (!!config.logToStdout) {
+            console.error('Unexpected error on idle client', err);
+        }
         throw (err);
     });
 
     // Log on new connection
-    pool.on('acquire', (client) => {
+    pool.on('acquire', () => {
 
-        console.log('PG Pool Acquire new client');
-        console.log(client);
+        if (!!config.logToStdout) {
+            console.log('PG Pool Acquire new client');
+            console.log();
+        }
     });
 
     // Log on connection closed
-    pool.on('remove', (client) => {
+    pool.on('remove', () => {
 
-        console.log('client is closed & removed from the pool');
-        console.log(client);
+        if (!!config.logToStdout) {
+            console.log('client is closed & removed from the pool');
+        }
     });
 
 
