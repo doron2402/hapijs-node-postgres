@@ -1,16 +1,23 @@
+// @ts-check
 'use strict';
 
 const Hoek = require('hoek');
 const PG = require('pg');
 
 const DEFAULTS = {
-    connectionString: process.env.POSTGRES_URL,
+    connectionString: undefined,
+    host: undefined,
+    port: undefined,
+    user: undefined,
+    password: undefined,
+    database: undefined,
     attach: 'onPreHandler',
     detach: 'tail',
     native: false,
     idleTimeoutMillis: 10000,
     max: 10,
-    logToStdout: false
+    logToStdout: false,
+    onPreConnect: (config) => Promise.resolve(),
 };
 
 exports.register = function (server, options, next) {
@@ -51,18 +58,23 @@ exports.register = function (server, options, next) {
 
     server.expose('pool', new Pool(config));
 
-    server.ext(config.attach, (request, reply) => {
+    server.ext(config.attach, async (request, reply) => {
+
+        await config.onPreConnect(pool.options);
 
         request.pg = {};
-        pool.connect().then((client) => {
+
+        try {
+
+            const client = await pool.connect();
 
             request.pg = client;
             reply.continue();
-        }).catch((err) => {
+        } catch(err) {
 
             server.log(['error'], err.stack);
             return reply(err);
-        });
+        }
     });
 
     server.on(config.detach, (request, err) => {
